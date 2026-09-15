@@ -7,6 +7,8 @@ from pathlib import Path
 from PIL import Image, ImageOps, ImageTk
 from screeninfo import get_monitors
 
+from countdown_timer import CountdownTimer
+
 
 APP_NAME = "Python Image Slideshow"
 CONFIG_FILE = "settings.ini"
