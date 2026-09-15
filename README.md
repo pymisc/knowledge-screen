@@ -3,67 +3,48 @@
 **Turn a spare monitor into a continuously rotating visual knowledge
 display.**
 
-Knowledge Screen is a lightweight, cross-platform Python application
-that displays a directory of educational, technical, reference, or other
-images as a full-screen slideshow.
+Knowledge Screen is a lightweight Python application that displays
+educational, technical, reference, or other images from a directory as a
+full-screen slideshow. It is designed for multi-monitor setups: by
+default it prefers a portrait monitor and falls back to the primary
+monitor when no portrait display is available.
 
-It is designed especially for multi-monitor setups. By default,
-Knowledge Screen **prefers a portrait monitor** when one is available.
-If no portrait monitor is detected, it automatically falls back to the
-**primary monitor**.
-
-The project currently supports Windows and Linux and uses a simple INI
-configuration file so normal settings can be changed without modifying
-Python code.
+The project supports Windows and Linux. Runtime behavior is configured
+through `settings.ini`, keeping normal user settings separate from
+Python application logic.
 
 ------------------------------------------------------------------------
 
 ## Why Knowledge Screen?
 
-Knowledge Screen started from a simple use case: keep technical
-diagrams, Python learning material, Kubernetes architecture images,
-cheat sheets, and other useful visual references rotating on a spare
-portrait monitor.
+Knowledge Screen started with a simple use case: keep Python learning
+material, Kubernetes architecture diagrams, cloud references, cheat
+sheets, and other useful visual content rotating on a spare monitor.
 
-Instead of loading an entire presentation, Knowledge Screen discovers
-image files from a directory and displays them one at a time. This keeps
-the application simple and makes the content directory itself the source
-of the slideshow.
-
-Possible content includes:
-
--   Python learning diagrams
--   Kubernetes architecture diagrams
--   AWS/cloud reference material
--   Terraform and DevOps cheat sheets
--   Linux command references
--   Networking diagrams
--   Certification study material
--   Personal notes exported as images
--   Any PNG, JPG, or JPEG reference images
-
-------------------------------------------------------------------------
+Instead of maintaining a presentation, Knowledge Screen discovers images
+directly from a directory and displays them one at a time. The content
+directory itself becomes the slideshow source.
 
 ## Current Features
 
 -   Full-screen, borderless image display
 -   PNG, JPG, and JPEG support
 -   Multi-monitor detection
--   Prefer portrait monitor automatically
--   Automatic fallback to the primary monitor
+-   Portrait-monitor preference
+-   Primary-monitor fallback
 -   Manual monitor selection by index
 -   Windows and Linux support
 -   Configurable image-change interval
 -   Recursive directory scanning
 -   Optional shuffle
--   Aspect-ratio-preserving image scaling
+-   Aspect-ratio-preserving scaling
 -   EXIF orientation handling
 -   Configurable background color
 -   Optional filename display
 -   Optional hidden mouse cursor
--   Keyboard controls for navigation
--   Pause/resume support
--   Configuration through `slideshow.ini`
+-   Keyboard navigation
+-   Pause/resume
+-   INI-based configuration
 
 ------------------------------------------------------------------------
 
@@ -74,44 +55,33 @@ knowledge-screen/
 ├── .gitignore
 ├── LICENSE
 ├── README.md
-├── python_image_slideshow.py
+├── architecture_diagram.png
+├── knowledge_screen.py
 ├── requirements.txt
-└── slideshow.ini
+└── settings.ini
 ```
 
-> If the main script is renamed to `knowledge_screen.py`, substitute
-> that filename in the commands below.
+### `knowledge_screen.py`
 
-### `python_image_slideshow.py`
+The main application. It reads configuration, discovers images, detects
+monitors, selects the target display, creates the Tkinter window,
+loads/resizes images, schedules transitions, and handles keyboard input.
 
-This is the main application.
+### `settings.ini`
 
-It is responsible for:
+The application's configuration file. Settings are organized into
+logical sections:
 
--   reading the configuration
--   discovering supported images
--   detecting available monitors
--   selecting the target monitor
--   creating the Tkinter display window
--   loading and resizing images with Pillow
--   moving between images
--   handling the slideshow timer
--   processing keyboard commands
--   handling basic runtime errors
+-   `[slideshow]` --- image source and slideshow behavior
+-   `[display]` --- monitor and presentation behavior
 
-### `slideshow.ini`
-
-This contains user-configurable settings.
-
-The important design idea is to keep **configuration separate from
-application logic**. For example, changing the slideshow interval or
-image directory should not require editing Python source code.
+The filename and section names are independent. `settings.ini` is the
+file; `[slideshow]` and `[display]` are groups of related settings
+inside it.
 
 ### `requirements.txt`
 
-Lists third-party Python dependencies required by the project.
-
-Currently:
+Third-party Python dependencies:
 
 ``` text
 Pillow
@@ -120,18 +90,22 @@ screeninfo
 
 ### `.gitignore`
 
-Prevents local/generated files such as the Python virtual environment
-from being committed to Git.
-
-A recommended entry is:
+Local/generated content should not be committed. The virtual environment
+should be ignored with:
 
 ``` gitignore
 .venv/
 ```
 
+### `architecture_diagram.png`
+
+A visual explanation of the repository, configuration, program flow,
+monitor selection, slideshow loop, and fresh-clone setup. It is embedded
+at the end of this README.
+
 ### `LICENSE`
 
-Contains the project's open-source license.
+The project is released under the MIT License.
 
 ------------------------------------------------------------------------
 
@@ -144,30 +118,21 @@ git clone https://github.com/pymisc/knowledge-screen.git
 cd knowledge-screen
 ```
 
-------------------------------------------------------------------------
-
 ## 2. Verify Python
-
-Knowledge Screen requires Python 3.
 
 ``` bash
 python --version
 ```
 
-On some Linux distributions the command may be:
+On systems where Python 3 is exposed as `python3`:
 
 ``` bash
 python3 --version
 ```
 
-------------------------------------------------------------------------
+## 3. Create a Virtual Environment
 
-## 3. Create a Project Virtual Environment
-
-Using a virtual environment keeps Knowledge Screen's Python packages
-isolated from packages installed globally or for other projects.
-
-Create a virtual environment named `.venv`:
+A dedicated virtual environment keeps this project's packages isolated.
 
 ### Windows
 
@@ -181,17 +146,6 @@ python -m venv .venv
 python3 -m venv .venv
 ```
 
-This creates a local directory:
-
-``` text
-knowledge-screen/
-└── .venv/
-```
-
-The `.venv/` directory should **not** be committed to Git.
-
-------------------------------------------------------------------------
-
 ## 4. Activate the Virtual Environment
 
 ### Windows PowerShell
@@ -200,23 +154,13 @@ The `.venv/` directory should **not** be committed to Git.
 .\.venv\Scripts\Activate.ps1
 ```
 
-The prompt should change to something similar to:
-
-``` text
-(.venv) PS C:\...\knowledge-screen>
-```
-
-To verify which Python executable is being used:
+Verify:
 
 ``` powershell
 where.exe python
 ```
 
-The first result should point into:
-
-``` text
-knowledge-screen\.venv\Scripts\python.exe
-```
+The first result should point inside `.venv\Scripts`.
 
 ### Windows Command Prompt
 
@@ -230,27 +174,17 @@ knowledge-screen\.venv\Scripts\python.exe
 source .venv/bin/activate
 ```
 
-The shell prompt should now normally contain:
-
-``` text
-(.venv)
-```
-
-You can verify it with:
+Verify:
 
 ``` bash
 which python
 ```
 
-------------------------------------------------------------------------
-
-## 5. Upgrade pip (Recommended)
+## 5. Upgrade pip
 
 ``` bash
 python -m pip install --upgrade pip
 ```
-
-------------------------------------------------------------------------
 
 ## 6. Install Dependencies
 
@@ -258,14 +192,9 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-This installs the required packages into `.venv`, not globally.
-
 ### Linux Tkinter Note
 
-Tkinter is part of Python's standard library, but some minimal Linux
-distributions package it separately.
-
-On Ubuntu/Debian:
+Some Linux distributions package Tkinter separately. On Ubuntu/Debian:
 
 ``` bash
 sudo apt install python3-tk
@@ -275,28 +204,17 @@ sudo apt install python3-tk
 
 # Configuration
 
-Edit:
-
-``` text
-slideshow.ini
-```
-
-before starting Knowledge Screen.
-
-Example:
+Edit `settings.ini` before starting Knowledge Screen.
 
 ``` ini
 [slideshow]
-
 image_folder = D:\Learning\TechImages
 image_change_seconds = 120
 recursive = true
 shuffle = false
 background_color = black
 
-
 [display]
-
 monitor_mode = prefer_portrait
 monitor_index = 0
 hide_mouse_cursor = true
@@ -304,10 +222,39 @@ show_filename = false
 filename_font_size = 18
 ```
 
-For Linux, an image directory might look like:
+Linux example:
 
 ``` ini
 image_folder = /home/user/Pictures/TechLearning
+```
+
+## How the INI File Is Organized
+
+``` text
+settings.ini
+│
+├── [slideshow]
+│   ├── image_folder
+│   ├── image_change_seconds
+│   ├── recursive
+│   ├── shuffle
+│   └── background_color
+│
+└── [display]
+    ├── monitor_mode
+    ├── monitor_index
+    ├── hide_mouse_cursor
+    ├── show_filename
+    └── filename_font_size
+```
+
+Python's `configparser` reads the file and then retrieves values by
+section and key, for example:
+
+``` python
+parser.get("slideshow", "image_folder")
+parser.getint("slideshow", "image_change_seconds")
+parser.getboolean("display", "hide_mouse_cursor")
 ```
 
 ------------------------------------------------------------------------
@@ -318,29 +265,19 @@ image_folder = /home/user/Pictures/TechLearning
 
 ### `image_folder`
 
-Directory containing images to display.
-
-Windows example:
+Directory containing images:
 
 ``` ini
 image_folder = D:\Learning\TechImages
 ```
 
-Linux example:
-
-``` ini
-image_folder = /home/user/Pictures/TechLearning
-```
-
 ### `image_change_seconds`
 
-How long each image remains visible.
+Time each image remains visible:
 
 ``` ini
 image_change_seconds = 120
 ```
-
-Examples:
 
     Value Duration
   ------- ------------
@@ -351,13 +288,13 @@ Examples:
 
 ### `recursive`
 
-Controls whether subdirectories are searched.
+Search subdirectories:
 
 ``` ini
 recursive = true
 ```
 
-With recursive scanning enabled, a directory can be organized naturally:
+This allows organization such as:
 
 ``` text
 TechLearning/
@@ -368,34 +305,29 @@ TechLearning/
 └── Linux/
 ```
 
-All supported images underneath these directories will be discovered.
-
 ### `shuffle`
 
-Controls whether the initial image list is randomized.
+Start with shuffled image order:
 
 ``` ini
 shuffle = false
 ```
 
+Shuffle can also be toggled at runtime with `S`.
+
 ### `background_color`
 
-Background shown around an image when its aspect ratio does not fill the
-complete display.
+Background shown when an image does not fill the display:
 
 ``` ini
 background_color = black
 ```
 
-------------------------------------------------------------------------
-
 ## `[display]`
 
 ### `monitor_mode`
 
-Controls which monitor Knowledge Screen uses.
-
-Three modes are supported:
+Supported values:
 
 ``` ini
 monitor_mode = prefer_portrait
@@ -411,9 +343,7 @@ monitor_mode = index
 
 ### `prefer_portrait`
 
-This is the recommended default.
-
-The selection logic is:
+The recommended default. Selection works conceptually as follows:
 
 ``` text
 Detect monitors
@@ -432,19 +362,15 @@ monitor       |
        first monitor
 ```
 
-In other words:
+A portrait monitor is identified when:
 
-1.  Find monitors where `height > width`.
-2.  If a portrait monitor exists, use the first one.
-3.  Otherwise use the operating system's primary monitor.
-4.  If no primary monitor is reported, use the first available monitor.
-
-This means Knowledge Screen also works normally on a laptop or desktop
-with only a landscape display.
+``` python
+monitor.height > monitor.width
+```
 
 ### `primary`
 
-Always use the primary monitor:
+Always select the primary monitor:
 
 ``` ini
 monitor_mode = primary
@@ -452,25 +378,15 @@ monitor_mode = primary
 
 ### `index`
 
-Manually select a detected monitor:
+Select a specific detected monitor:
 
 ``` ini
 monitor_mode = index
 monitor_index = 1
 ```
 
-Monitor numbering begins at `0`.
-
-Knowledge Screen prints detected monitors when it starts, for example:
-
-``` text
-Detected monitors:
-  [0] 2560x1440 at (0, 0) Landscape Primary=True
-  [1] 1080x1920 at (2560, 0) Portrait Primary=False
-
-Monitor selection: portrait monitor found.
-Displaying on: 1080x1920 at (2560, 0)
-```
+Indexes start at `0`. Knowledge Screen prints monitor information at
+startup to help identify the correct index.
 
 ### `hide_mouse_cursor`
 
@@ -478,18 +394,13 @@ Displaying on: 1080x1920 at (2560, 0)
 hide_mouse_cursor = true
 ```
 
-Hides the pointer while Knowledge Screen is running.
-
 ### `show_filename`
 
 ``` ini
 show_filename = false
 ```
 
-Controls whether the current filename is shown near the bottom of the
-display.
-
-It can also be toggled at runtime with `F`.
+Press `F` while running to toggle the filename.
 
 ### `filename_font_size`
 
@@ -497,36 +408,27 @@ It can also be toggled at runtime with `F`.
 filename_font_size = 18
 ```
 
-Sets the filename text size.
-
 ------------------------------------------------------------------------
 
 # Running Knowledge Screen
 
-Activate the virtual environment first.
-
-Then run:
-
-``` bash
-python python_image_slideshow.py
-```
-
-If the script has been renamed:
+Activate `.venv`, then run:
 
 ``` bash
 python knowledge_screen.py
 ```
 
-Knowledge Screen will:
+The application then:
 
-1.  Read `slideshow.ini`.
-2.  Validate important configuration settings.
-3.  Search the configured image directory.
-4.  Detect available monitors.
-5.  Select the preferred display.
-6.  Create a borderless window covering that monitor.
-7.  Display the first image.
-8.  Automatically advance according to the configured interval.
+1.  Reads `settings.ini`.
+2.  Parses and validates settings.
+3.  Scans the configured image directory.
+4.  Filters supported images.
+5.  Detects connected monitors.
+6.  Selects the target display.
+7.  Creates a borderless window.
+8.  Loads and displays the current image.
+9.  Schedules the next image.
 
 ------------------------------------------------------------------------
 
@@ -546,28 +448,10 @@ Knowledge Screen will:
 
 # How Image Display Works
 
-Knowledge Screen intentionally preserves the original image aspect
-ratio.
+Knowledge Screen preserves image aspect ratio rather than stretching
+content to match the monitor.
 
-For example, suppose the target portrait monitor is:
-
-``` text
-1080 x 1920
-```
-
-A portrait image can occupy most of that display.
-
-A landscape image may instead be resized to something similar to:
-
-``` text
-1080 x 650
-```
-
-and centered against the configured background.
-
-The image is **not stretched** to 1080 x 1920.
-
-Pillow performs the resize using high-quality LANCZOS resampling:
+Pillow performs high-quality resizing with LANCZOS:
 
 ``` python
 image.thumbnail(
@@ -576,159 +460,84 @@ image.thumbnail(
 )
 ```
 
-The program also applies EXIF orientation information when present,
-which helps photographs appear in their intended orientation.
+EXIF orientation metadata is honored with `ImageOps.exif_transpose()`.
+Images that do not fill the entire monitor are centered against the
+configured background.
 
 ------------------------------------------------------------------------
 
 # How the Python Components Work
 
-Knowledge Screen is also a practical example of several useful Python
-concepts.
-
 ## `configparser`
 
-Python's standard `configparser` module reads `slideshow.ini`.
+Reads and parses `settings.ini`:
 
 ``` python
 import configparser
 ```
 
-This lets the program read typed values such as integers and booleans:
-
-``` python
-parser.getint(...)
-parser.getboolean(...)
-```
-
-This demonstrates an important application-design principle:
+It provides typed access through methods such as `get()`, `getint()`,
+and `getboolean()`.
 
 > **Code defines how the program works; configuration defines how a
 > particular installation should behave.**
 
-------------------------------------------------------------------------
-
 ## `pathlib`
 
-The application uses `Path` rather than manually constructing filesystem
-path strings:
+Provides portable filesystem handling:
 
 ``` python
 from pathlib import Path
 ```
 
-It is used for tasks including:
-
--   locating `slideshow.ini`
--   checking whether the image directory exists
--   recursively finding files
--   examining file extensions
-
-`pathlib` also helps keep filesystem code portable between Windows and
-Linux.
-
-------------------------------------------------------------------------
+It is used for locating configuration, scanning directories, checking
+paths, and examining extensions.
 
 ## Pillow
-
-Pillow provides image processing:
 
 ``` python
 from PIL import Image, ImageOps, ImageTk
 ```
 
-It handles:
-
--   opening image files
--   EXIF orientation
--   resizing images
--   preserving aspect ratio
--   converting images for Tkinter display
-
-------------------------------------------------------------------------
+Handles image loading, EXIF orientation, resizing, aspect-ratio
+preservation, and conversion for Tkinter.
 
 ## `screeninfo`
-
-`screeninfo` provides multi-monitor information:
 
 ``` python
 from screeninfo import get_monitors
 ```
 
-The program can inspect:
-
--   monitor width
--   monitor height
--   X/Y desktop coordinates
--   primary-monitor status
-
-Portrait detection is conceptually:
-
-``` python
-monitor.height > monitor.width
-```
-
-------------------------------------------------------------------------
+Provides connected-monitor dimensions, coordinates, and primary-monitor
+information.
 
 ## Tkinter
 
-Tkinter provides the application's graphical window and event loop.
+Provides the graphical window and event loop. It displays images,
+receives keyboard events, and schedules timed image changes.
 
-It is responsible for:
+## `random`
 
--   creating the slideshow window
--   displaying the image
--   processing keyboard input
--   scheduling image changes
--   keeping the application running
-
-The program uses a borderless window positioned explicitly at the
-selected monitor's coordinates. This is useful for multi-monitor setups
-because the application controls exactly where the slideshow appears.
+Provides runtime image-list shuffling.
 
 ------------------------------------------------------------------------
 
-## Classes
+# Application Classes
 
-The application currently separates responsibilities into classes.
+## `SlideshowConfig`
 
-### `SlideshowConfig`
+Responsible for reading configuration, retrieving `[slideshow]` and
+`[display]` values, applying fallback values, and validating settings.
 
-Responsible for reading and validating configuration.
+## `ImageSlideshow`
 
-### `ImageSlideshow`
-
-Responsible for the running application:
-
--   monitor selection
--   image discovery
--   display
--   timers
--   navigation
--   keyboard input
-
-This keeps configuration handling separate from slideshow behavior.
-
-------------------------------------------------------------------------
-
-## Exceptions and Validation
-
-The program checks for problems such as:
-
--   missing configuration file
--   invalid image directory
--   no supported images
--   invalid monitor mode
--   invalid monitor index
--   image loading failures
-
-Instead of silently failing, useful errors are printed to the terminal.
+Responsible for image discovery, monitor selection, window setup,
+rendering, timers, navigation, pause/resume, shuffle, filename display,
+keyboard handling, and cleanup.
 
 ------------------------------------------------------------------------
 
 # Supported Image Formats
-
-Currently:
 
 ``` text
 .png
@@ -736,31 +545,13 @@ Currently:
 .jpeg
 ```
 
-The check is case-insensitive.
+Extension matching is case-insensitive.
 
 ------------------------------------------------------------------------
 
-# Stopping Knowledge Screen
+# Typical Fresh-Clone Workflow
 
-Press:
-
-``` text
-Esc
-```
-
-To leave the Python virtual environment afterward:
-
-``` bash
-deactivate
-```
-
-------------------------------------------------------------------------
-
-# Typical Workflow After Cloning
-
-For a new user, the complete workflow is:
-
-### Windows PowerShell
+## Windows PowerShell
 
 ``` powershell
 git clone https://github.com/pymisc/knowledge-screen.git
@@ -773,33 +564,25 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Edit:
-
-``` text
-slideshow.ini
-```
-
-Set at least:
+Edit `settings.ini` and set:
 
 ``` ini
 image_folder = C:\path\to\your\images
 ```
 
-Then:
+Run:
 
 ``` powershell
-python python_image_slideshow.py
+python knowledge_screen.py
 ```
 
-Exit with `Esc`.
-
-When finished:
+Exit with `Esc`, then deactivate:
 
 ``` powershell
 deactivate
 ```
 
-### Linux
+## Linux
 
 ``` bash
 git clone https://github.com/pymisc/knowledge-screen.git
@@ -812,16 +595,16 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Edit `slideshow.ini`:
+Edit:
 
 ``` ini
 image_folder = /path/to/your/images
 ```
 
-Then:
+Run:
 
 ``` bash
-python python_image_slideshow.py
+python knowledge_screen.py
 ```
 
 When finished:
@@ -834,10 +617,7 @@ deactivate
 
 # Development Setup
 
-If you plan to modify Knowledge Screen rather than only run it, use the
-same `.venv` environment.
-
-A useful development cycle is:
+A simple development cycle:
 
 ``` text
 Clone repository
@@ -855,46 +635,32 @@ Install requirements
 Modify code
       |
       v
-Run locally
-      |
-      v
-Test
+Run and test
       |
       v
 Commit changes
 ```
 
-Do not commit `.venv/`. Dependencies needed by the project belong in
+Do not commit `.venv/`. Project dependencies belong in
 `requirements.txt`.
 
 ------------------------------------------------------------------------
 
 # Roadmap
 
-Knowledge Screen intentionally starts small, but the name and
-architecture leave room for expansion.
-
 Potential future capabilities include:
 
--   GIF support
--   WebP support
+-   GIF and WebP support
 -   PDF page display
--   automatic directory watching
--   automatically include newly added files
--   categories
--   playlists
--   playlist scheduling
--   different content at different times of day
--   Raspberry Pi support
--   kiosk mode
--   better logging
--   automated tests
--   test coverage
--   CI/CD with GitHub Actions
--   application packaging
--   standalone executable builds
-
-A possible evolution:
+-   directory watching
+-   automatic discovery of newly added content
+-   categories and playlists
+-   scheduled/time-based content
+-   Raspberry Pi and kiosk mode
+-   structured logging
+-   automated tests and coverage
+-   GitHub Actions CI/CD
+-   application packaging / standalone executable builds
 
 ``` text
 Knowledge Screen
@@ -928,12 +694,15 @@ Knowledge Screen
 
 # Troubleshooting
 
+## Configuration file not found
+
+Verify that `settings.ini` exists in the same directory as
+`knowledge_screen.py`.
+
 ## No images found
 
-Verify `image_folder` in `slideshow.ini` and make sure the directory
-contains `.png`, `.jpg`, or `.jpeg` files.
-
-If images are stored in subdirectories, use:
+Verify `image_folder` in `settings.ini` and confirm that the directory
+contains `.png`, `.jpg`, or `.jpeg` files. For subdirectories:
 
 ``` ini
 recursive = true
@@ -941,10 +710,7 @@ recursive = true
 
 ## Wrong monitor selected
 
-Start the application from a terminal and inspect the detected monitor
-list.
-
-You can force a monitor with:
+Inspect the monitor information printed at startup. To force a monitor:
 
 ``` ini
 monitor_mode = index
@@ -953,9 +719,8 @@ monitor_index = 1
 
 ## PowerShell blocks virtual-environment activation
 
-If PowerShell prevents `Activate.ps1` from running because of the local
-execution policy, review your organization's/security policy before
-changing it. An alternative is to use Command Prompt activation:
+If local execution policy prevents `Activate.ps1`, review the applicable
+security policy. Command Prompt activation is an alternative:
 
 ``` cmd
 .venv\Scripts\activate.bat
@@ -963,7 +728,7 @@ changing it. An alternative is to use Command Prompt activation:
 
 ## Tkinter missing on Linux
 
-On Ubuntu/Debian:
+Ubuntu/Debian:
 
 ``` bash
 sudo apt install python3-tk
@@ -976,26 +741,35 @@ sudo apt install python3-tk
 Contributions, bug reports, testing feedback, and feature ideas are
 welcome.
 
-When contributing:
-
-1.  Create a branch.
-2.  Keep changes focused.
-3.  Test the change locally.
-4.  Update documentation when behavior changes.
-5.  Open a pull request describing the change and why it is useful.
+1.  Fork or clone the repository.
+2.  Create a focused branch.
+3.  Create and activate `.venv`.
+4.  Install dependencies.
+5.  Make and test the change.
+6.  Update documentation when behavior changes.
+7.  Open a pull request describing the change.
 
 ------------------------------------------------------------------------
 
 # License
 
-Knowledge Screen is open-source software released under the license
-included in the repository.
+Knowledge Screen is open-source software released under the [MIT
+License](LICENSE).
+
+------------------------------------------------------------------------
+
+# Architecture Diagram
+
+The diagram below summarizes the repository structure, configuration,
+Python components, monitor selection, application flow, slideshow loop,
+and fresh-clone workflow.
+
+[![Knowledge Screen - How It
+Works](architecture_diagram.png)](architecture_diagram.png)
 
 ------------------------------------------------------------------------
 
 ## Project Philosophy
-
-Knowledge Screen follows a simple idea:
 
 > **Useful knowledge should not have to stay buried in folders. Put it
 > on a screen where you can see it.**
