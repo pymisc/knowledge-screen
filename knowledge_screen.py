@@ -9,7 +9,7 @@ from screeninfo import get_monitors
 
 
 APP_NAME = "Python Image Slideshow"
-CONFIG_FILE = "slideshow.ini"
+CONFIG_FILE = "settings.ini"
 
 SUPPORTED_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
