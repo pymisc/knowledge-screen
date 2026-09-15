@@ -68,6 +68,19 @@ class SlideshowConfig:
             "display", "filename_font_size", fallback=18
         )
 
+        # Timer settings
+        self.show_timer = self.parser.getboolean(
+            "display", "show_timer", fallback=True
+        )
+
+        self.timer_font_size = self.parser.getint(
+            "display", "timer_font_size", fallback=18
+        )
+
+        self.timer_color = self.parser.get(
+            "display", "timer_color", fallback="lightgray"
+        )
+
         self.validate()
 
     def validate(self):
@@ -309,6 +322,15 @@ class ImageSlideshow:
                 anchor="s",
             )
 
+        self.countdown_timer = CountdownTimer(
+            parent=self.container,
+            duration_seconds=self.config.image_change_seconds,
+            background_color=self.config.background_color,
+            text_color=self.config.timer_color,
+            font_size=self.config.timer_font_size,
+            enabled=self.config.show_timer,
+        )
+
     def bind_keys(self):
         self.root.bind("<Escape>", self.quit)
         self.root.bind("<Right>", self.next_image)
@@ -397,6 +419,8 @@ class ImageSlideshow:
                 self.next_image,
             )
 
+            self.countdown_timer.start()
+
     def cancel_timer(self):
         if self.timer_id is not None:
             self.root.after_cancel(self.timer_id)
@@ -429,10 +453,20 @@ class ImageSlideshow:
 
         if self.paused:
             self.cancel_timer()
+            self.countdown_timer.pause()
             print("Slideshow PAUSED")
+
         else:
             print("Slideshow RESUMED")
-            self.schedule_next_image()
+
+            remaining_seconds = self.countdown_timer.seconds_remaining
+
+            self.timer_id = self.root.after(
+                remaining_seconds * 1000,
+                self.next_image,
+            )
+
+            self.countdown_timer.resume()
 
     def toggle_shuffle(self, event=None):
         current_image = self.images[self.current_index]
@@ -467,6 +501,7 @@ class ImageSlideshow:
 
     def quit(self, event=None):
         self.cancel_timer()
+        self.countdown_timer.stop()
         self.root.destroy()
 
 
