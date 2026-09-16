@@ -31,9 +31,9 @@ class CountdownTimer:
 
         if self.enabled:
             self.label.place(
-                relx=0.5,
-                rely=0.995,
-                anchor="s",
+                relx=0.99,
+                rely=0.99,
+                anchor="se",
             )
 
     def start(self):

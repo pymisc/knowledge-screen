@@ -8,6 +8,7 @@ from PIL import Image, ImageOps, ImageTk
 from screeninfo import get_monitors
 
 from countdown_timer import CountdownTimer
+from legend import KeyboardLegend
 
 
 APP_NAME = "Python Image Slideshow"
@@ -79,6 +80,19 @@ class SlideshowConfig:
 
         self.timer_color = self.parser.get(
             "display", "timer_color", fallback="lightgray"
+        )
+
+        # Legend settings
+        self.show_legend = self.parser.getboolean(
+            "display", "show_legend", fallback=True
+        )
+
+        self.legend_font_size = self.parser.getint(
+            "display", "legend_font_size", fallback=12
+        )
+
+        self.legend_color = self.parser.get(
+            "display", "legend_color", fallback="lightgray"
         )
 
         self.validate()
@@ -329,6 +343,14 @@ class ImageSlideshow:
             text_color=self.config.timer_color,
             font_size=self.config.timer_font_size,
             enabled=self.config.show_timer,
+        )
+
+        self.keyboard_legend = KeyboardLegend(
+            parent=self.container,
+            background_color=self.config.background_color,
+            text_color=self.config.legend_color,
+            font_size=self.config.legend_font_size,
+            enabled=self.config.show_legend,
         )
 
     def bind_keys(self):
